@@ -1,20 +1,20 @@
 
 function sendRecord() {
     let data = new FormData(document.forms["record"]);
-    data.forEach((v, k) => console.log(v + ": " + k));
+    data.append("xxx", "42");
 
     const Http = new XMLHttpRequest();
     const url = '/records';
     Http.open("POST", url);
-
+    Http.send(data);
+    /*
     return new Promise((resolve) => {
-        Http.send();
         Http.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
                 resolve();
             }
         }
-    });
+    });*/
 }
 
 function setInputsLocked(is_locked) {
