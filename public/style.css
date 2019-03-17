@@ -6,10 +6,16 @@
 }
 
 .button {
-    width: 30%;
-    height: 30%;
+    width: 20%;
+    height: 20%;
 }
 
-#username {
-    padding-bottom: 15px;
+input {
+    margin-bottom: 25px;
+}
+
+#time {
+    background-color: white;
+    text-align: center;
+    font-size: 12pt;
 }

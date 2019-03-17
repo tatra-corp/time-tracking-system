@@ -1,0 +1,21 @@
+{
+  "name": "time_tracking_system",
+  "version": "0.0.1",
+  "description": "Time tracking system for Software Project 2019 Spring Innopolis course.",
+  "main": "src/server/app.js",
+  "private": true,
+  "scripts": {
+    "build": "babel src --out-dir src.transpiled --source-maps",
+    "start": "node src.transpiled/server/app.js",
+    "test": "echo \"Error: no test specified\" &amp;&amp; exit 1"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.2.3"
+  },
+  "author": "Harrm & iambackend"
+}

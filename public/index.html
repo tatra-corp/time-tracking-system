@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Time-tracking system</title>
-
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
 
-<div class="pane">
+<form id="record" class="pane" name="record">
+    <script src="bundle.js" lang="js"></script>
 
     <label for="username">Your name:</label>
-    <input type="text" id="username"/>
+    <input type="text" id="username" name="username" minlength="5" required/>
 
-    <img src="img/play.png" width="200" height="200" class="button" >
+    <input id="button" class="button" type="image" src="img/play.png" alt="Submit">
 
-    <p id="time">00:00:00</p>
+    <label for="time"></label>
+    <input type="text" id="time" name="time" readonly />
 
     <label for="project_name">Project title:</label>
-    <input type="text" id="project_name"/>
+    <input type="text" id="project_name" name="project_name" minlength="3" required/>
 
     <label for="task_name">Task name:</label>
-    <input type="text" id="task_name"/>
-
-</div>
+    <input type="text" id="task_name" name="task_name" minlength="5" required/>
+</form>
 
 </body>
 </html>
