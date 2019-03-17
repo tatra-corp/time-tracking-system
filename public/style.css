@@ -1,0 +1,15 @@
+
+.pane {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.button {
+    width: 30%;
+    height: 30%;
+}
+
+#username {
+    padding-bottom: 15px;
+}
