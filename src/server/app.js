@@ -19,18 +19,33 @@ const client = new Client({
 
 client.connect();
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-    if (err) throw err;
-    for (let row of res.rows) {
-        console.log(JSON.stringify(row));
-    }
-    client.end();
-});
-
 const routes = express.Router();
 
-function startTimer(body) {
+async function findStudentID(username) {
+    let result = await client.query('SELECT id FROM student WHERE name = $1', [username]);
+    if (typeof result == 'undefined') return undefined;
+    else return result.rows[0].id;
+}
 
+async function findProjectID(project_name) {
+    let result = await client.query('SELECT id FROM project WHERE name = $1', [project_name]);
+    if (typeof result == 'undefined') return undefined;
+    else return result.rows[0].id;
+}
+
+async function findTaskID(task_name, projectID) {
+    let result = await client.query('SELECT id FROM task WHERE name = $1 AND project = $2', [task_name, projectID]);
+    if (typeof result == 'undefined' ) return undefined;
+    else return result.rows[0].id;
+}
+
+async function startTimer(body) {
+    let studentID = await findStudentID(body.username);
+    let projectID = await findProjectID(body.project_name);
+    let taskID = await findTaskID(body.task_name, projectID);
+
+    client.query('INSERT INTO record(student, project, task, start) values($1, $2, $3, to_timestamp($4))', [studentID,
+        projectID, taskID, body.time]);
 }
 
 function stopTimer(body) {

@@ -2,7 +2,8 @@
 function sendRecord(action) {
     let data = new FormData(document.forms["record"]);
     data.append("action", action);
-    data.append("time", new Date);
+    data.set("time", (new Date).getTime() / 1000);
+    if(action === 'stop') data.append("start_time", start.getTime() / 1000);
     data.delete("x");
     data.delete("y");
 
@@ -32,7 +33,7 @@ function validateForm() {
     return true;
 }
 
-let start = new Date();
+let start;
 
 function getDateDiff(date1, date2) {
     return new Date(date2.getTime() - date1.getTime());
