@@ -1,10 +1,13 @@
 
-function sendRecord() {
+function sendRecord(action) {
     let data = new FormData(document.forms["record"]);
-    data.append("xxx", "42");
+    data.append("action", action);
+    data.append("time", new Date);
+    data.delete("x");
+    data.delete("y");
 
     const Http = new XMLHttpRequest();
-    const url = '/records';
+    const url = "/records";
     Http.open("POST", url);
     Http.send(data);
     /*
@@ -52,19 +55,20 @@ document.body.onload = function () {
         e.preventDefault();
         if(validateForm()) {
             if(!interval) {
+                sendRecord('start');
                 start = new Date();
                 interval = setInterval(updateTime, 1000, start);
                 button.src = "img/stop.jpg";
                 setInputsLocked(true);
 
             } else {
+                sendRecord('stop');
                 clearInterval(interval);
                 interval = null;
                 button.src = "img/play.png";
                 updateTime(new Date());
                 setInputsLocked(false);
             }
-            sendRecord();
         }
     };
 };
