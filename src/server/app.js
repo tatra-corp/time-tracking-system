@@ -45,11 +45,24 @@ async function startTimer(body) {
     let taskID = await findTaskID(body.task_name, projectID);
 
     client.query('INSERT INTO record(student, project, task, start) values($1, $2, $3, to_timestamp($4))', [studentID,
-        projectID, taskID, body.time]);
+        projectID, taskID, body.start_time]);
 }
 
-function stopTimer(body) {
-    
+async function findRecordID(body) {
+    let studentID = await findStudentID(body.username);
+    let projectID = await findProjectID(body.project_name);
+    let taskID = await findTaskID(body.task_name, projectID);
+
+    let result = await client.query('SELECT id FROM record WHERE student = $1 AND project = $2 AND task = $3' +
+        'AND start = to_timestamp($4)', [studentID, projectID, taskID, body.start_time]);
+    if (typeof result == 'undefined' ) return undefined;
+    else return result.rows[0].id;
+}
+
+async function stopTimer(body) {
+    let recordID = await findRecordID(body);
+
+    client.query('UPDATE record SET stop = to_timestamp($1) WHERE id = $2', [body.stop_time, recordID]);
 }
 
 routes.post('/records', upload.array(), function(req, res) {

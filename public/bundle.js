@@ -2,8 +2,8 @@
 function sendRecord(action) {
     let data = new FormData(document.forms["record"]);
     data.append("action", action);
-    data.set("time", (new Date).getTime() / 1000);
-    if(action === 'stop') data.append("start_time", start.getTime() / 1000);
+    if(action === 'stop') data.append("stop_time", (new Date).getTime() / 1000);
+    data.append("start_time", start.getTime() / 1000);
     data.delete("x");
     data.delete("y");
 
@@ -56,8 +56,8 @@ document.body.onload = function () {
         e.preventDefault();
         if(validateForm()) {
             if(!interval) {
-                sendRecord('start');
                 start = new Date();
+                sendRecord('start');
                 interval = setInterval(updateTime, 1000, start);
                 button.src = "img/stop.jpg";
                 setInputsLocked(true);
