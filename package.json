@@ -7,7 +7,7 @@
   "scripts": {
     "build": "babel src --out-dir src.transpiled --source-maps",
     "start": "node src.transpiled/server/app.js",
-    "test": "echo \"Error: no test specified\" &amp;&amp; exit 1"
+    "test": "mocha"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -19,7 +19,8 @@
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
-    "@babel/preset-env": "^7.3.4"
+    "@babel/preset-env": "^7.3.4",
+    "mocha": "^6.0.2"
   },
   "author": "Harrm & iambackend"
 }
