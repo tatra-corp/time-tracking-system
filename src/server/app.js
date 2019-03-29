@@ -40,7 +40,7 @@ async function findTaskID(task_name, projectID) {
 }
 
 async function startTimer(body) {
-    let studentID = await findStudentID(body.username);
+    let studentID_promise = await findStudentID(body.username);
     let projectID = await findProjectID(body.project_name);
     let taskID = await findTaskID(body.task_name, projectID);
 

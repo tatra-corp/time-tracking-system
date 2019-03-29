@@ -9,23 +9,55 @@
 
 <body>
 
-<form id="record" class="pane" name="record">
-    <script src="bundle.js" lang="js"></script>
 
-    <label for="username">Your name:</label>
-    <input type="text" id="username" name="username" minlength="5" required/>
+<div class="tab">
+    <button class="tablinks" onclick="openTimer(event)">Timer</button>
+    <button class="tablinks" onclick="openRecords(event)">Records</button>
+</div>
 
-    <input id="button" class="button" type="image" src="img/play.png" alt="Submit">
+<div id="timer" class="tabcontent">
+    <form id="record" class="pane" name="record">
+        <script src="bundle.js" lang="js"></script>
 
-    <label for="time"></label>
-    <input type="text" id="time" name="time" readonly />
+        <label for="username">Your name:</label>
+        <input type="text" id="username" name="username" minlength="5" required/>
 
-    <label for="project_name">Project title:</label>
-    <input type="text" id="project_name" name="project_name" minlength="3" required/>
+        <input id="button" class="button" type="image" src="img/play.png" alt="Submit">
 
-    <label for="task_name">Task name:</label>
-    <input type="text" id="task_name" name="task_name" minlength="5" required/>
-</form>
+        <label for="time"></label>
+        <input type="text" id="time" name="time" readonly />
+
+        <label for="project_name">Project title:</label>
+        <input type="text" id="project_name" name="project_name" minlength="3" required/>
+
+        <label for="task_name">Task name:</label>
+        <input type="text" id="task_name" name="task_name" minlength="5" required/>
+    </form>
+</div>
+
+<div id="records" class="tabcontent">
+    <table style="width:100%">
+        <tr>
+            <th>Time</th>
+            <th>Username</th>
+            <th>Project</th>
+            <th>Task</th>
+        </tr>
+        <tr>
+            <td>00:00:00</td>
+            <td>User 1</td>
+            <td>Project 1</td>
+            <td>Task 1</td>
+        </tr>
+        <tr>
+            <td>00:00:00</td>
+            <td>User 2</td>
+            <td>Project 1</td>
+            <td>Task 2</td>
+        </tr>
+    </table>
+</div>
+
 
 </body>
 </html>
