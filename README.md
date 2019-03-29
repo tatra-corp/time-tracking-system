@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Harrm/time-tracking-system.svg?branch=master)](https://travis-ci.org/Harrm/time-tracking-system)
+[![Build Status](https://travis-ci.org/tatra-corp/time-tracking-system.svg?branch=master)](https://travis-ci.org/tatra-corp/time-tracking-system)
 
 
 # time-tracking-system
