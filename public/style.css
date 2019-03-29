@@ -1,4 +1,8 @@
 
+#to_records {
+    text-align: right;
+}
+
 .pane {
     display: flex;
     align-items: center;
@@ -18,4 +22,28 @@ input {
     background-color: white;
     text-align: center;
     font-size: 12pt;
+}
+
+#back {
+    padding-bottom: 50px;
+}
+
+#back-button {
+    margin: 15px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
 }
