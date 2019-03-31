@@ -1,5 +1,5 @@
-import * as path from 'path';
-import express from 'express';
+const path = require('path');
+const express = require('express');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -15,11 +15,15 @@ const timer = require('./timer.js');
 const routes = express.Router();
 
 routes.post('/records', upload.array(), (req, res) => {
-  console.log(req.method);
+  // console.log(req);
   console.log(req.body);
-  res.send();
   if (req.body.action === 'start') timer.start(req.body);
   else if (req.body.action === 'stop') timer.stop(req.body);
+  else {
+    res.sendStatus(400);
+    return;
+  }
+  res.sendStatus(200);
 });
 
 routes.use('/', express.static(path.join('public')));
@@ -29,3 +33,5 @@ app.use('/', routes);
 const port = process.env.PORT || 3000;
 app.listen(port);
 console.log(`Listening on port ${port}`);
+
+module.exports = app;

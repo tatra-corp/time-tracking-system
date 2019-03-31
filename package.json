@@ -14,7 +14,8 @@
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "multer": "^1.4.1",
-    "pg": "^7.9.0"
+    "pg": "^7.9.0",
+    "form-data": "latest"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -23,7 +24,8 @@
     "eslint": "^5.15.3",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
-    "mocha": "^6.0.2"
+    "mocha": "^6.0.2",
+    "supertest": "^4.0.2"
   },
   "author": "Harrm & iambackend"
 }

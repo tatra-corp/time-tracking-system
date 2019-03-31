@@ -7,6 +7,7 @@ function sendRecord(action) {
   data.append('start_time', start.getTime() / 1000);
   data.delete('x');
   data.delete('y');
+  data.delete('time'); // we already sending unix time;
 
   const Http = new XMLHttpRequest();
   const url = '/records';
