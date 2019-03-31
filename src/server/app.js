@@ -14,9 +14,7 @@ const timer = require('./timer.js');
 
 const routes = express.Router();
 
-routes.post('/records', upload.array(), (req, res) => {
-  // console.log(req);
-  console.log(req.body);
+routes.post('/records', upload.none(), (req, res) => {
   if (req.body.action === 'start') timer.start(req.body);
   else if (req.body.action === 'stop') timer.stop(req.body);
   else {

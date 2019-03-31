@@ -7,7 +7,7 @@
   "scripts": {
     "build": "babel src --out-dir src.transpiled --source-maps",
     "start": "node src.transpiled/server/app.js",
-    "test": "eslint src/server public/bundle.js && mocha"
+    "test": "eslint src/server public/bundle.js && mocha --exit"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
