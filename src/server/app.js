@@ -10,7 +10,7 @@ const upload = multer(); // for parsing multipart/form-data
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const timer = require('./timer.js');
+const timer = require('./records.js');
 
 const routes = express.Router();
 
@@ -22,6 +22,16 @@ routes.post('/records', upload.none(), (req, res) => {
     return;
   }
   res.sendStatus(200);
+});
+
+routes.get('/records', (req, res) => {
+  timer.getRecords(req.query.offset, req.query.limit).then((data) => {
+    console.log(data);
+    res.status(200).send(JSON.stringify(data));
+  }).catch((reason) => {
+    console.log(reason);
+    res.sendStatus(400);
+  });
 });
 
 routes.use('/', express.static(path.join('public')));

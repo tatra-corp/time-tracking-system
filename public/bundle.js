@@ -34,17 +34,44 @@ function validateForm() {
   return true;
 }
 
-function getDateDiff(date1, date2) {
-  return new Date(date2.getTime() - date1.getTime());
+function getTimeDiff(date1, date2) {
+  // console.log(date1);
+  // console.log(date2);
+  let diff = new Date(date2.getTime() - date1.getTime());
+  return`${(`0${diff.getUTCHours()}`).slice(-2)}:${
+    (`0${diff.getMinutes()}`).slice(-2)}:${
+    (`0${diff.getSeconds()}`).slice(-2)}`;
 }
 
 function updateTime(initial) {
-  const diff = getDateDiff(initial, new Date());
-
   const time = document.getElementById('time');
-  time.value = `${(`0${diff.getUTCHours()}`).slice(-2)}:${
-    (`0${diff.getMinutes()}`).slice(-2)}:${
-    (`0${diff.getSeconds()}`).slice(-2)}`;
+  time.value = getTimeDiff(initial, new Date());
+}
+
+function getRecords(offset, limit) {
+  const Http = new XMLHttpRequest();
+  const url = `/records?offset=${offset}&limit=${limit}`;
+  Http.open('GET', url);
+  Http.send();
+  Http.onload = () => {
+    if (Http.status === 200) {
+      const records = JSON.parse(Http.responseText);
+      const template = document.querySelector('div#records_table table tbody .table_record');
+      let prev = document.querySelector('div#records_table table tbody .table_record:last-child');
+      for(let i = 0; i < records.length; i++) {
+        const row = template.cloneNode(true);
+        row.querySelector(".table_time").innerHTML = getTimeDiff(new Date(records[i].start), new Date(records[i].stop));
+        row.querySelector(".table_user").innerHTML = records[i].student;
+        row.querySelector(".table_project").innerHTML = records[i].project;
+        row.querySelector(".table_task").innerHTML = records[i].task;
+        row.style.display = "";
+        prev.after(row);
+        prev = row;
+      }
+    } else {
+      console.log(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`);
+    }
+  };
 }
 
 let interval = null;
@@ -70,4 +97,5 @@ document.body.onload = function () {
       }
     }
   };
+  getRecords(0, 10);
 };
