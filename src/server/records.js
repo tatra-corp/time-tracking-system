@@ -51,7 +51,9 @@ async function stopTimer(body) {
 }
 
 async function getRecords(offset, limit) {
-  const result = await db.query('SELECT * FROM record ORDER BY start DESC OFFSET $1 LIMIT $2', [offset, limit]);
+  const result = await db.query('SELECT record.id, student.name as student, project.name as project, task.name as task, record.start, record.stop FROM record '
+    + 'JOIN student ON record.student = student.id JOIN project ON record.project = project.id JOIN task ON record.task = task.id '
+    + 'ORDER BY start DESC OFFSET $1 LIMIT $2', [offset, limit]);
   return result.rows;
 }
 

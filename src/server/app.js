@@ -26,10 +26,9 @@ routes.post('/records', upload.none(), (req, res) => {
 
 routes.get('/records', (req, res) => {
   timer.getRecords(req.query.offset, req.query.limit).then((data) => {
-    console.log(data);
     res.status(200).send(JSON.stringify(data));
   }).catch((reason) => {
-    console.log(reason);
+    console.error(reason);
     res.sendStatus(400);
   });
 });

@@ -37,8 +37,8 @@ function validateForm() {
 function getTimeDiff(date1, date2) {
   // console.log(date1);
   // console.log(date2);
-  let diff = new Date(date2.getTime() - date1.getTime());
-  return`${(`0${diff.getUTCHours()}`).slice(-2)}:${
+  const diff = new Date(date2.getTime() - date1.getTime());
+  return `${(`0${diff.getUTCHours()}`).slice(-2)}:${
     (`0${diff.getMinutes()}`).slice(-2)}:${
     (`0${diff.getSeconds()}`).slice(-2)}`;
 }
@@ -58,18 +58,21 @@ function getRecords(offset, limit) {
       const records = JSON.parse(Http.responseText);
       const template = document.querySelector('div#records_table table tbody .table_record');
       let prev = document.querySelector('div#records_table table tbody .table_record:last-child');
-      for(let i = 0; i < records.length; i++) {
+      for (let i = 0; i < records.length; i += 1) {
         const row = template.cloneNode(true);
-        row.querySelector(".table_time").innerHTML = getTimeDiff(new Date(records[i].start), new Date(records[i].stop));
-        row.querySelector(".table_user").innerHTML = records[i].student;
-        row.querySelector(".table_project").innerHTML = records[i].project;
-        row.querySelector(".table_task").innerHTML = records[i].task;
-        row.style.display = "";
+        if (records[i].stop === null) {
+          records[i].stop = new Date();
+        }
+        row.querySelector('.table_time').innerHTML = getTimeDiff(new Date(records[i].start), new Date(records[i].stop));
+        row.querySelector('.table_user').innerHTML = records[i].student;
+        row.querySelector('.table_project').innerHTML = records[i].project;
+        row.querySelector('.table_task').innerHTML = records[i].task;
+        row.style.display = '';
         prev.after(row);
         prev = row;
       }
     } else {
-      console.log(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`);
+      console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`);
     }
   };
 }
