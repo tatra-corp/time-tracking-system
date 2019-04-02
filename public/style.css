@@ -1,9 +1,5 @@
-
-#to_records {
-    text-align: right;
-}
-
 .pane {
+    font-family: arial, sans-serif;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -24,14 +20,6 @@ input {
     font-size: 12pt;
 }
 
-#back {
-    padding-bottom: 50px;
-}
-
-#back-button {
-    margin: 15px;
-}
-
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
@@ -46,4 +34,9 @@ td, th {
 
 tr:nth-child(even) {
     background-color: #dddddd;
+}
+
+#load-more {
+    text-align: center;
+    margin: 20px;
 }

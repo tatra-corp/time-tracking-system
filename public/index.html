@@ -19,7 +19,7 @@
         <input id="button" class="button" type="image" src="img/play.png" alt="Submit">
 
         <label for="time"></label>
-        <input type="text" id="time" name="time" readonly />
+        <input type="text" id="time" name="time" value="00:00:00" readonly />
 
         <label for="project_name">Project title:</label>
         <input type="text" id="project_name" name="project_name" minlength="3" required/>
@@ -29,28 +29,28 @@
     </form>
 </div>
 
-<div id="records">
+<div id="records_table">
     <table style="width:100%">
-        <tr>
+        <tr class="table_header">
             <th>Time</th>
             <th>Username</th>
             <th>Project</th>
             <th>Task</th>
         </tr>
-        <tr>
-            <td>00:00:00</td>
-            <td>User 1</td>
-            <td>Project 1</td>
-            <td>Task 1</td>
-        </tr>
-        <tr>
-            <td>00:00:00</td>
-            <td>User 2</td>
-            <td>Project 1</td>
-            <td>Task 2</td>
+        <tr class="table_record" style="display: none">
+            <td class="table_time">00:00:00</td>
+            <td class="table_user">User 1</td>
+            <td class="table_project">Project 1</td>
+            <td class="table_task">Task 1</td>
         </tr>
     </table>
+    <div id="load-more">
+        <button onclick="getMoreRecords()">
+            Load more
+        </button>
+    </div>
 </div>
+
 
 
 </body>

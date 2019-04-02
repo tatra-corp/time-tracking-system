@@ -50,7 +50,15 @@ async function stopTimer(body) {
   db.query('UPDATE record SET stop = to_timestamp($1) WHERE id = $2', [body.stop_time, recordID]);
 }
 
+async function getRecords(offset, limit) {
+  const result = await db.query('SELECT record.id, student.name as student, project.name as project, task.name as task, record.start, record.stop FROM record '
+    + 'JOIN student ON record.student = student.id JOIN project ON record.project = project.id JOIN task ON record.task = task.id '
+    + 'ORDER BY start DESC OFFSET $1 LIMIT $2', [offset, limit]);
+  return result.rows;
+}
+
 module.exports = {
   start: startTimer,
   stop: stopTimer,
+  getRecords,
 };
