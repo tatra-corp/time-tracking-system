@@ -19,7 +19,7 @@
         <input id="button" class="button" type="image" src="img/play.png" alt="Submit">
 
         <label for="time"></label>
-        <input type="text" id="time" name="time" readonly />
+        <input type="text" id="time" name="time" value="00:00:00" readonly />
 
         <label for="project_name">Project title:</label>
         <input type="text" id="project_name" name="project_name" minlength="3" required/>
@@ -44,7 +44,13 @@
             <td class="table_task">Task 1</td>
         </tr>
     </table>
+    <div id="load-more">
+        <button onclick="getMoreRecords()">
+            Load more
+        </button>
+    </div>
 </div>
+
 
 
 </body>

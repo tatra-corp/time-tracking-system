@@ -48,6 +48,8 @@ function updateTime(initial) {
   time.value = getTimeDiff(initial, new Date());
 }
 
+let numberOfRecords = 0;
+
 function getRecords(offset, limit) {
   const Http = new XMLHttpRequest();
   const url = `/records?offset=${offset}&limit=${limit}`;
@@ -71,10 +73,15 @@ function getRecords(offset, limit) {
         prev.after(row);
         prev = row;
       }
+      numberOfRecords += records.length;
     } else {
       console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`);
     }
   };
+}
+
+function getMoreRecords() {
+  getRecords(numberOfRecords, 10);
 }
 
 let interval = null;
@@ -100,5 +107,5 @@ document.body.onload = function () {
       }
     }
   };
-  getRecords(0, 10);
+  getMoreRecords();
 };
