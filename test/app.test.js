@@ -20,32 +20,42 @@ describe('App', () => {
 
 describe('App', () => {
   describe('#get/records?offset=0&limit=10', () => {
-    it('should return 200 in response to ask for records', () => request(app)
-      .get('/records?offset=0&limit=10')
-      .expect(200));
+    it('should return 200 in response to ask for records', (done) =>{
+      request(app).get('/records?offset=0&limit=10').expect(200);
+      done();
+    });
   });
 });
 
 describe('App', () => {
   describe('#get/records?offset=-1&limit=10', () => {
-    it('should return 400 in response to ask for records with negative offset', () => request(app)
-      .get('/records?offset=-1&limit=10')
-      .expect(400));
+    it('should return 400 in response to ask for records with negative offset', (done) => {
+      request(app)
+        .get('/records?offset=-1&limit=10')
+        .expect(400);
+      done();
+    });
   });
 });
 
 describe('App', () => {
   describe('#get/records?offset=0&limit=0', () => {
-    it('should return 200 in response to ask for records with 0 limit', () => request(app)
-      .get('/records?offset=0&limit=0')
-      .expect(200));
+    it('should return 200 in response to ask for records with 0 limit', (done) => {
+      request(app)
+        .get('/records?offset=0&limit=0')
+        .expect(200);
+      done();
+    });
   });
 });
 
 describe('App', () => {
   describe('#get/records?offset=0&limit=-1', () => {
-    it('should return 400 in response to ask for records with negative limit', () => request(app)
-      .get('/records?offset=0&limit=-1')
-      .expect(400));
+    it('should return 400 in response to ask for records with negative limit', (done) => {
+      request(app)
+        .get('/records?offset=0&limit=-1')
+        .expect(400);
+      done();
+    });
   });
 });
