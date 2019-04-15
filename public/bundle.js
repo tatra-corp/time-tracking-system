@@ -8,90 +8,94 @@ function getTimeDiff (date1, date2) {
 class Timer extends React.Component {
   constructor () {
     super()
-    this.sendRecord = this.sendRecord.bind(this) // this is for 'this' working in this context.
+    this.handleSubmit = this.handleSubmit.bind(this) // this is for 'this' working in this context.
+    this.handleInputChange = this.handleInputChange.bind(this) // this is for 'this' working in this context.
     // is this clear?
     this.state = {
-      interval: null
+      interval: null,
+      play: false,
+      username: '',
+      project_name: '',
+      task_name: '',
     }
-  }
-
-  setInputsLocked (isLocked) {
-    const form = document.forms.record
-    form.username.readOnly = isLocked
-    form.project_name.readOnly = isLocked
-    form.task_name.readOnly = isLocked
   }
 
   validateForm () {
     return true
   }
 
-  sendRecord () {
-    const data = new FormData(document.forms.record)
-    data.append('action', this.state.play ? 'start' : 'stop')
-    if (this.state.play) data.append('stop_time', (new Date()).getTime() / 1000)
-    data.append('start_time', start.getTime() / 1000)
-    data.delete('x')
-    data.delete('y')
-    data.delete('time') // we already sending unix time;
+  sendRecord (event) {
+    const message = new FormData()
+    const data = event.target
+    message.append('', username)
+    message.append('', project_name)
+    message.append('', task_name)
+    message.append('action', this.state.play ? 'start' : 'stop')
+    if (this.state.play) message.append('stop_time', (new Date()).getTime() / 1000)
+    console.log(this.state)
+    message.append('start_time', this.state.start.getTime() / 1000)
 
     const Http = new XMLHttpRequest()
     const url = '/records'
     Http.open('POST', url)
-    Http.send(data)
+    Http.send(message)
   };
 
-  handleSubmit (e) {
-    e.preventDefault()
+  handleSubmit (event) {
+    event.preventDefault()
     if (this.validateForm()) {
       if (!this.state.interval) {
         this.setState({
           play: true,
-          start: new Date()
-        })
-        this.sendRecord()
-        this.setState({
+          start: new Date(),
           interval: setInterval(this.render, 1000)
-        })
-        this.setInputsLocked(true)
+        }, ()=>{this.sendRecord(event)})
+        // this.sendRecord(event)
       } else {
-        this.sendRecord()
+        this.sendRecord(event)
         clearInterval(this.state.interval)
         this.setState({
           play: false,
           start: new Date(),
           interval: null
         })
-        this.setInputsLocked(false)
       }
     }
   }
 
-  render () {
-    return (<div id="timer">
-      <form id="record" className="pane" name="record" onSubmit={this.handleSubmit}>
-        <label htmlFor="username">Your name:</label>
-        <input type="text" id="username" name="username" minLength="5" required/>
+  handleInputChange (event) {
+    const target = event.target
+    const name = target.name
+    const value = target.value
+    console.log(name)
 
-        <input id="button" className="button" type="image" src={this.state.play ? 'img/stop.jpg' : 'img/play.png'}
-               alt="Submit"/>
+    this.setState({
+      [name]: value
+    })
+  }
 
-        <label htmlFor="time"/>
-        <input type="text" id="time" name="time" value={this.state.interval?getTimeDiff(this.state.start, new Date()):"00:00:00"} readOnly/>
+  render () { // we should add change handler for every field to keep internal state of HTML form and React component
+    // consistent. But for now it works fine.
+    return (<form id="timer" className="pane" name="timer" onSubmit={this.handleSubmit}>
+      <label htmlFor="username">Your name:</label>
+      <input type="text" id="username" name="username" value={this.state.username} minLength="5" required
+             readOnly={this.state.play} onChange={this.handleInputChange}/>
 
-        <label htmlFor="project_name">Project title:</label>
-        <input type="text" id="project_name" name="project_name" minLength="3" required/>
+      <input id="button" className="button" type="image" src={this.state.play ? 'img/stop.jpg' : 'img/play.png'}
+             alt="Submit"/>
 
-        <label htmlFor="task_name">Task name:</label>
-        <input type="text" id="task_name" name="task_name" minLength="5" required/>
-      </form>
-    </div>)
+      <div id="time"> {this.state.interval ? getTimeDiff(this.state.start, new Date()) : '00:00:00'} </div>
+
+      <label htmlFor="project_name">Project title:</label>
+      <input type="text" id="project_name" name="project_name" value={this.state.project_name} minLength="3" required
+             readOnly={this.state.play} onChange={this.handleInputChange}/>
+
+      <label htmlFor="task_name">Task name:</label>
+      <input type="text" id="task_name" name="task_name" value={this.state.task_name} minLength="5" required
+             readOnly={this.state.play} onChange={this.handleInputChange}/>
+    </form>)
   };
 }
-
-
-
-
 
 class Record extends React.Component {
 
@@ -103,13 +107,13 @@ class Record extends React.Component {
 
   constructor (props) {
     super(props)
-    this.state = {};
+    this.state = {}
     if (this.props.stop === undefined) {
-      this.state.stop = new Date();
-      this.updateTime = this.updateTime.bind(this);
-      setInterval(this.updateTime, 1000);
+      this.state.stop = new Date()
+      this.updateTime = this.updateTime.bind(this)
+      setInterval(this.updateTime, 1000)
     } else
-      this.state.stop = this.props.stop;
+      this.state.stop = this.props.stop
   }
 
   render () {
@@ -121,10 +125,6 @@ class Record extends React.Component {
     </tr>)
   }
 }
-
-
-
-
 
 class RecordsTable extends React.Component {
 
@@ -147,8 +147,8 @@ class RecordsTable extends React.Component {
         this.setState((state) => {
           return {
             records: [...state.records, ...records]
-          };
-        });
+          }
+        })
       } else {
         console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`)
       }
@@ -156,7 +156,7 @@ class RecordsTable extends React.Component {
   }
 
   getMoreRecords () {
-    this.getRecords(this.state.records.length, 10);
+    this.getRecords(this.state.records.length, 10)
   }
 
   componentDidMount () {
@@ -165,7 +165,7 @@ class RecordsTable extends React.Component {
 
   render () {
     return (<div id="records_table">
-      <table style={{"width": "100%"}}>
+      <table style={{ 'width': '100%' }}>
         <tbody>
         <tr className="table_header">
           <th>Time</th>
@@ -176,7 +176,8 @@ class RecordsTable extends React.Component {
         {
           this.state.records.map((record) => {
             return (
-              <Record key={record.id} user={record.student} start={new Date(record.start)} stop={record.stop?new Date(record.stop):undefined}
+              <Record key={record.id} user={record.student} start={new Date(record.start)}
+                      stop={record.stop ? new Date(record.stop) : undefined}
                       project={record.project} task={record.task}/>)
           })
         }
@@ -190,7 +191,6 @@ class RecordsTable extends React.Component {
     </div>)
   }
 }
-
 
 try {
   ReactDOM.render(<div className="wholesite">

@@ -10,7 +10,7 @@
     height: 20%;
 }
 
-input {
+input, #timer>div {
     margin-bottom: 25px;
 }
 
