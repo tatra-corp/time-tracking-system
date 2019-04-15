@@ -78,7 +78,7 @@ class Timer extends React.Component {
         <label htmlFor="username">Your name:</label>
         <input type="text" id="username" name="username" minLength="5" required/>
 
-        <input id="button" className="button" type="image" src={this.state.play ? 'img/stop.jpg' : 'img/start.png'}
+        <input id="button" className="button" type="image" src={this.state.play ? 'img/stop.jpg' : 'img/play.png'}
                alt="Submit"/>
 
         <label htmlFor="time"/>
@@ -94,6 +94,10 @@ class Timer extends React.Component {
   };
 }
 
+
+
+
+
 class Record extends React.Component {
   updateTime () {
     this.setState({
@@ -101,20 +105,21 @@ class Record extends React.Component {
     })
   }
 
-  constructor () {
-    super()
-    this.state = {
-      record_id: this.props.id,
-      stop: (this.props.stop ? this.props.stop : new Date())
-    }
-    if (!this.props.stop)
-      setInterval(this.updateTime, 1000)
+  constructor (props) {
+    super(props)
+    // console.log(this.props);
+    this.state = {};
+    if (this.props.stop === undefined) {
+      this.state.stop = new Date();
+      setInterval(this.updateTime, 1000);
+    } else
+      this.state.stop = this.props.stop;
   }
 
   render () {
-    return (<tr className="table_record" style="display: none">
+    return (<tr className="table_record">
+      {/*{console.log(this.state)}*/}
       <td className="table_time">{getTimeDiff(this.props.start, this.state.stop)}</td>
-      // yeah, it's a little messy.
       <td className="table_user">{this.props.user}</td>
       <td className="table_project">{this.props.project}</td>
       <td className="table_task">{this.props.task}</td>
@@ -122,13 +127,19 @@ class Record extends React.Component {
   }
 }
 
+
+
+
+
 class RecordsTable extends React.Component {
 
-  constructor () {
-    super()
+  constructor (props) {
+    console.log('wtf');
+    super(props)
     this.state = {
       records: []
     }
+    // this.getRecords(0, this.props.initialLength)
   }
 
   getRecords (offset, limit) {
@@ -139,9 +150,12 @@ class RecordsTable extends React.Component {
     Http.onload = () => {
       if (Http.status === 200) {
         const records = JSON.parse(Http.responseText)
-        this.setState((prev) => {
-          records: [...prev.records, ...records]
-        })
+        console.log(this);
+        this.setState((state) => {
+          return {
+            records: [...state.records, ...records]
+          };
+        });
       } else {
         console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`)
       }
@@ -149,7 +163,8 @@ class RecordsTable extends React.Component {
   }
 
   getMoreRecords () {
-    this.getRecords(this.state.records.length, 10)
+    // console.log(this.state.records.length);
+    this.getRecords(this.state.records.length, 10);
   }
 
   componentDidMount () {
@@ -157,7 +172,6 @@ class RecordsTable extends React.Component {
   }
 
   render () {
-    this.getRecords(0, this.props.initialLength)
     return (<div id="records_table">
       <table style={{"width": "100%"}}>
         <tbody>
@@ -169,12 +183,13 @@ class RecordsTable extends React.Component {
         </tr>
         {
           this.state.records.map((record) => {
+            console.log('a hule?');
             return (
-              <Record key={record.id} user={record.student} start={record.start} stop={record.stop}
-                      project={record.project}
-                      task={record.task}/>)
+              <Record key={record.id} user={record.student} start={new Date(record.start)} stop={new Date(record.stop)}
+                      project={record.project} task={record.task}/>)
           })
         }
+        {console.log(this.state.records)}
         </tbody>
       </table>
       <div id="load-more">
