@@ -1,111 +1,230 @@
-let start;
+let start
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-function sendRecord(action) {
-  const data = new FormData(document.forms.record);
-  data.append('action', action);
-  if (action === 'stop') data.append('stop_time', (new Date()).getTime() / 1000);
-  data.append('start_time', start.getTime() / 1000);
-  data.delete('x');
-  data.delete('y');
-  data.delete('time'); // we already sending unix time;
-
-  const Http = new XMLHttpRequest();
-  const url = '/records';
-  Http.open('POST', url);
-  Http.send(data);
-  /*
-    return new Promise((resolve) => {
-        Http.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                resolve();
-            }
-        }
-    }); */
-}
-
-function setInputsLocked(isLocked) {
-  const form = document.forms.record;
-  form.username.readOnly = isLocked;
-  form.project_name.readOnly = isLocked;
-  form.task_name.readOnly = isLocked;
-}
-
-function validateForm() {
-  return true;
-}
-
-function getTimeDiff(date1, date2) {
+function getTimeDiff (date1, date2) {
   // console.log(date1);
   // console.log(date2);
-  const diff = new Date(date2.getTime() - date1.getTime());
+  const diff = new Date(date2.getTime() - date1.getTime())
   return `${(`0${diff.getUTCHours()}`).slice(-2)}:${
     (`0${diff.getMinutes()}`).slice(-2)}:${
-    (`0${diff.getSeconds()}`).slice(-2)}`;
+    (`0${diff.getSeconds()}`).slice(-2)}`
 }
 
-function updateTime(initial) {
-  const time = document.getElementById('time');
-  time.value = getTimeDiff(initial, new Date());
-}
+class Timer extends React.Component {
+  constructor () {
+    super()
+    this.sendRecord = this.sendRecord.bind(this) // this is for 'this' working in this context.
+    // is this clear?
+  }
 
-let numberOfRecords = 0;
+  setInputsLocked (isLocked) {
+    const form = document.forms.record
+    form.username.readOnly = isLocked
+    form.project_name.readOnly = isLocked
+    form.task_name.readOnly = isLocked
+  }
 
-function getRecords(offset, limit) {
-  const Http = new XMLHttpRequest();
-  const url = `/records?offset=${offset}&limit=${limit}`;
-  Http.open('GET', url);
-  Http.send();
-  Http.onload = () => {
-    if (Http.status === 200) {
-      const records = JSON.parse(Http.responseText);
-      const template = document.querySelector('div#records_table table tbody .table_record');
-      let prev = document.querySelector('div#records_table table tbody .table_record:last-child');
-      for (let i = 0; i < records.length; i += 1) {
-        const row = template.cloneNode(true);
-        if (records[i].stop === null) {
-          records[i].stop = new Date();
-        }
-        row.querySelector('.table_time').innerHTML = getTimeDiff(new Date(records[i].start), new Date(records[i].stop));
-        row.querySelector('.table_user').innerHTML = records[i].student;
-        row.querySelector('.table_project').innerHTML = records[i].project;
-        row.querySelector('.table_task').innerHTML = records[i].task;
-        row.style.display = '';
-        prev.after(row);
-        prev = row;
+  validateForm () {
+    return true
+  }
+
+  sendRecord () {
+    const data = new FormData(document.forms.record)
+    data.append('action', this.state.play ? 'start' : 'stop')
+    if (this.state.play) data.append('stop_time', (new Date()).getTime() / 1000)
+    data.append('start_time', start.getTime() / 1000)
+    data.delete('x')
+    data.delete('y')
+    data.delete('time') // we already sending unix time;
+
+    const Http = new XMLHttpRequest()
+    const url = '/records'
+    Http.open('POST', url)
+    Http.send(data)
+  };
+
+  handleSubmit (e) {
+    e.preventDefault()
+    if (this.validateForm()) {
+      if (!interval) {
+        this.setState({
+          play: true,
+          start: new Date()
+        })
+        this.sendRecord()
+        interval = setInterval(this.render, 1000)
+        this.setInputsLocked(true)
+      } else {
+        this.sendRecord()
+        this.setState({
+          play: false,
+          start: new Date()
+        })
+        clearInterval(interval)
+        interval = null
+        this.setInputsLocked(false)
       }
-      numberOfRecords += records.length;
-    } else {
-      console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`);
     }
+  }
+
+  render () {
+    return (<div id="timer">
+      <form id="record" className="pane" name="record" onSubmit={this.handleSubmit}>
+        <label htmlFor="username">Your name:</label>
+        <input type="text" id="username" name="username" minLength="5" required/>
+
+        <input id="button" className="button" type="image" src={this.state.play ? 'img/stop.jpg' : 'img/start.png'}
+               alt="Submit"/>
+
+        <label htmlFor="time"/>
+        <input type="text" id="time" name="time" value={getTimeDiff(this.state.start, new Date())} readOnly/>
+
+        <label htmlFor="project_name">Project title:</label>
+        <input type="text" id="project_name" name="project_name" minLength="3" required/>
+
+        <label htmlFor="task_name">Task name:</label>
+        <input type="text" id="task_name" name="task_name" minLength="5" required/>
+      </form>
+    </div>)
   };
 }
 
-function getMoreRecords() {
-  getRecords(numberOfRecords, 10);
+class Record extends React.Component {
+  updateTime () {
+    this.setState({
+      stop: new Date()
+    })
+  }
+
+  constructor () {
+    super()
+    this.state = {
+      record_id: this.props.id,
+      stop: (this.props.stop?this.props.stop:new Date())
+    };
+    if (!this.props.stop)
+      setInterval(this.updateTime, 1000);
+  }
+
+  render () {
+    return (<tr className="table_record" style="display: none">
+      <td className="table_time">{getTimeDiff(this.props.start, this.state.stop)}</td>
+      // yeah, it's a little messy.
+      <td className="table_user">{this.props.user}</td>
+      <td className="table_project">{this.props.project}</td>
+      <td className="table_task">{this.props.task}</td>
+    </tr>)
+  }
 }
 
-let interval = null;
+class RecordsTable extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      records: []
+    }
+  }
+
+  getRecords(offset, limit) {
+    const Http = new XMLHttpRequest()
+    const url = `/records?offset=${offset}&limit=${limit}`
+    Http.open('GET', url)
+    Http.send()
+    Http.onload = () => {
+      if (Http.status === 200) {
+        const records = JSON.parse(Http.responseText)
+        this.setState((prev) => {
+          records: [...prev.records, ...records]
+        })
+      } else {
+        console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`)
+      }
+    }
+  }
+
+  getMoreRecords() {
+    this.getRecords(this.state.records.length, 10)
+  }
+
+  componentDidMount() {
+    this.getMoreRecords();
+  }
+
+  render () {
+    ReactDOM.return(<div id="records_table">
+      <table style="width:100%">
+        <tr className="table_header">
+          <th>Time</th>
+          <th>Username</th>
+          <th>Project</th>
+          <th>Task</th>
+        </tr>
+        {
+          this.state.records.map((record) => {
+            return (
+              <Record key={record.id} user={record.student} start={record.start} stop={record.stop} project={record.project}
+                      task={record.task}/>)
+          })
+        }
+      </table>
+      <div id="load-more">
+        <button onClick={this.getMoreRecords}>
+          Load more
+        </button>
+      </div>
+    </div>)
+  }
+}
+
+let interval = null
 
 document.body.onload = function () {
-  const button = document.getElementById('button');
+  const button = document.getElementById('button')
   document.getElementById('record').onsubmit = function (e) {
-    e.preventDefault();
+    e.preventDefault()
     if (validateForm()) {
       if (!interval) {
-        start = new Date();
-        sendRecord('start');
-        interval = setInterval(updateTime, 1000, start);
-        button.src = 'img/stop.jpg';
-        setInputsLocked(true);
+        start = new Date()
+        sendRecord('start')
+        interval = setInterval(updateTime, 1000, start)
+        button.src = 'img/stop.jpg'
+        setInputsLocked(true)
       } else {
-        sendRecord('stop');
-        clearInterval(interval);
-        interval = null;
-        button.src = 'img/play.png';
-        updateTime(new Date());
-        setInputsLocked(false);
+        sendRecord('stop')
+        clearInterval(interval)
+        interval = null
+        button.src = 'img/play.png'
+        updateTime(new Date())
+        setInputsLocked(false)
       }
     }
-  };
-  getMoreRecords();
-};
+  }
+  getMoreRecords()
+}
+
+ReactDOM.render(<div><Timer/>
+
+  <div id="records_table">
+    <table style="width:100%">
+      <tr className="table_header">
+        <th>Time</th>
+        <th>Username</th>
+        <th>Project</th>
+        <th>Task</th>
+      </tr>
+      <tr className="table_record" style="display: none">
+        <td className="table_time">00:00:00</td>
+        <td className="table_user">User 1</td>
+        <td className="table_project">Project 1</td>
+        <td className="table_task">Task 1</td>
+      </tr>
+    </table>
+    <div id="load-more">
+      <button onclick="getMoreRecords()">
+        Load more
+      </button>
+    </div>
+  </div>
+</div>, document.getElementById('root'))

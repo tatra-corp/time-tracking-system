@@ -5,53 +5,17 @@
     <meta charset="UTF-8">
     <title>Time-tracking system</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+
 </head>
 
 <body>
 
-<div id="timer">
-    <form id="record" class="pane" name="record">
-        <script src="bundle.js" lang="js"></script>
-
-        <label for="username">Your name:</label>
-        <input type="text" id="username" name="username" minlength="5" required/>
-
-        <input id="button" class="button" type="image" src="img/play.png" alt="Submit">
-
-        <label for="time"></label>
-        <input type="text" id="time" name="time" value="00:00:00" readonly />
-
-        <label for="project_name">Project title:</label>
-        <input type="text" id="project_name" name="project_name" minlength="3" required/>
-
-        <label for="task_name">Task name:</label>
-        <input type="text" id="task_name" name="task_name" minlength="5" required/>
-    </form>
-</div>
-
-<div id="records_table">
-    <table style="width:100%">
-        <tr class="table_header">
-            <th>Time</th>
-            <th>Username</th>
-            <th>Project</th>
-            <th>Task</th>
-        </tr>
-        <tr class="table_record" style="display: none">
-            <td class="table_time">00:00:00</td>
-            <td class="table_user">User 1</td>
-            <td class="table_project">Project 1</td>
-            <td class="table_task">Task 1</td>
-        </tr>
-    </table>
-    <div id="load-more">
-        <button onclick="getMoreRecords()">
-            Load more
-        </button>
-    </div>
-</div>
-
-
+<div class="root"></div>
 
 </body>
+
+<script src="https://unpkg.com/react@latest/dist/react.js"></script>
+<script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+<script src="bundle.js" lang="js" type="text/babel"></script>
 </html>
