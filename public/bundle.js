@@ -1,6 +1,5 @@
-let start
-import React from 'react'
-import ReactDOM from 'react-dom'
+// import React, {Component} from 'react'
+// import ReactDOM from 'react-dom'
 
 function getTimeDiff (date1, date2) {
   // console.log(date1);
@@ -16,6 +15,9 @@ class Timer extends React.Component {
     super()
     this.sendRecord = this.sendRecord.bind(this) // this is for 'this' working in this context.
     // is this clear?
+    this.state = {
+      interval: null
+    }
   }
 
   setInputsLocked (isLocked) {
@@ -47,22 +49,24 @@ class Timer extends React.Component {
   handleSubmit (e) {
     e.preventDefault()
     if (this.validateForm()) {
-      if (!interval) {
+      if (!this.state.interval) {
         this.setState({
           play: true,
           start: new Date()
         })
         this.sendRecord()
-        interval = setInterval(this.render, 1000)
+        this.setState({
+          interval: setInterval(this.render, 1000)
+        })
         this.setInputsLocked(true)
       } else {
         this.sendRecord()
+        clearInterval(this.state.interval)
         this.setState({
           play: false,
-          start: new Date()
+          start: new Date(),
+          interval: null
         })
-        clearInterval(interval)
-        interval = null
         this.setInputsLocked(false)
       }
     }
@@ -101,10 +105,10 @@ class Record extends React.Component {
     super()
     this.state = {
       record_id: this.props.id,
-      stop: (this.props.stop?this.props.stop:new Date())
-    };
+      stop: (this.props.stop ? this.props.stop : new Date())
+    }
     if (!this.props.stop)
-      setInterval(this.updateTime, 1000);
+      setInterval(this.updateTime, 1000)
   }
 
   render () {
@@ -120,14 +124,14 @@ class Record extends React.Component {
 
 class RecordsTable extends React.Component {
 
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.state = {
       records: []
     }
   }
 
-  getRecords(offset, limit) {
+  getRecords (offset, limit) {
     const Http = new XMLHttpRequest()
     const url = `/records?offset=${offset}&limit=${limit}`
     Http.open('GET', url)
@@ -144,16 +148,17 @@ class RecordsTable extends React.Component {
     }
   }
 
-  getMoreRecords() {
+  getMoreRecords () {
     this.getRecords(this.state.records.length, 10)
   }
 
-  componentDidMount() {
-    this.getMoreRecords();
+  componentDidMount () {
+    this.getMoreRecords()
   }
 
   render () {
-    ReactDOM.return(<div id="records_table">
+    this.getRecords(0, this.props.initialLength)
+    return (<div id="records_table">
       <table style="width:100%">
         <tr className="table_header">
           <th>Time</th>
@@ -164,7 +169,8 @@ class RecordsTable extends React.Component {
         {
           this.state.records.map((record) => {
             return (
-              <Record key={record.id} user={record.student} start={record.start} stop={record.stop} project={record.project}
+              <Record key={record.id} user={record.student} start={record.start} stop={record.stop}
+                      project={record.project}
                       task={record.task}/>)
           })
         }
@@ -178,53 +184,13 @@ class RecordsTable extends React.Component {
   }
 }
 
-let interval = null
-
-document.body.onload = function () {
-  const button = document.getElementById('button')
-  document.getElementById('record').onsubmit = function (e) {
-    e.preventDefault()
-    if (validateForm()) {
-      if (!interval) {
-        start = new Date()
-        sendRecord('start')
-        interval = setInterval(updateTime, 1000, start)
-        button.src = 'img/stop.jpg'
-        setInputsLocked(true)
-      } else {
-        sendRecord('stop')
-        clearInterval(interval)
-        interval = null
-        button.src = 'img/play.png'
-        updateTime(new Date())
-        setInputsLocked(false)
-      }
-    }
+console.log('wtf')
+  console.log('wtf')
+  try {
+    ReactDOM.render(<div className="wholesite">
+      <Timer/>
+      <RecordsTable initialLength={10}/>
+    </div>, document.getElementById('root'))
+  } catch (e) {
+    console.error(e)
   }
-  getMoreRecords()
-}
-
-ReactDOM.render(<div><Timer/>
-
-  <div id="records_table">
-    <table style="width:100%">
-      <tr className="table_header">
-        <th>Time</th>
-        <th>Username</th>
-        <th>Project</th>
-        <th>Task</th>
-      </tr>
-      <tr className="table_record" style="display: none">
-        <td className="table_time">00:00:00</td>
-        <td className="table_user">User 1</td>
-        <td className="table_project">Project 1</td>
-        <td className="table_task">Task 1</td>
-      </tr>
-    </table>
-    <div id="load-more">
-      <button onclick="getMoreRecords()">
-        Load more
-      </button>
-    </div>
-  </div>
-</div>, document.getElementById('root'))
