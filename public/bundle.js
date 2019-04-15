@@ -82,7 +82,7 @@ class Timer extends React.Component {
                alt="Submit"/>
 
         <label htmlFor="time"/>
-        <input type="text" id="time" name="time" value={getTimeDiff(this.state.start, new Date())} readOnly/>
+        <input type="text" id="time" name="time" value={this.state.interval?getTimeDiff(this.state.start, new Date()):"00:00:00"} readOnly/>
 
         <label htmlFor="project_name">Project title:</label>
         <input type="text" id="project_name" name="project_name" minLength="3" required/>
@@ -159,7 +159,8 @@ class RecordsTable extends React.Component {
   render () {
     this.getRecords(0, this.props.initialLength)
     return (<div id="records_table">
-      <table style="width:100%">
+      <table style={{"width": "100%"}}>
+        <tbody>
         <tr className="table_header">
           <th>Time</th>
           <th>Username</th>
@@ -174,6 +175,7 @@ class RecordsTable extends React.Component {
                       task={record.task}/>)
           })
         }
+        </tbody>
       </table>
       <div id="load-more">
         <button onClick={this.getMoreRecords}>
@@ -184,13 +186,12 @@ class RecordsTable extends React.Component {
   }
 }
 
-console.log('wtf')
-  console.log('wtf')
-  try {
-    ReactDOM.render(<div className="wholesite">
-      <Timer/>
-      <RecordsTable initialLength={10}/>
-    </div>, document.getElementById('root'))
-  } catch (e) {
-    console.error(e)
-  }
+
+try {
+  ReactDOM.render(<div className="wholesite">
+    <Timer/>
+    <RecordsTable initialLength={10}/>
+  </div>, document.getElementById('root'))
+} catch (e) {
+  console.error(e)
+}
