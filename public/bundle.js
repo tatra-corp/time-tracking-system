@@ -1,9 +1,4 @@
-// import React, {Component} from 'react'
-// import ReactDOM from 'react-dom'
-
 function getTimeDiff (date1, date2) {
-  // console.log(date1);
-  // console.log(date2);
   const diff = new Date(date2.getTime() - date1.getTime())
   return `${(`0${diff.getUTCHours()}`).slice(-2)}:${
     (`0${diff.getMinutes()}`).slice(-2)}:${
@@ -99,6 +94,7 @@ class Timer extends React.Component {
 
 
 class Record extends React.Component {
+
   updateTime () {
     this.setState({
       stop: new Date()
@@ -107,10 +103,10 @@ class Record extends React.Component {
 
   constructor (props) {
     super(props)
-    // console.log(this.props);
     this.state = {};
     if (this.props.stop === undefined) {
       this.state.stop = new Date();
+      this.updateTime = this.updateTime.bind(this);
       setInterval(this.updateTime, 1000);
     } else
       this.state.stop = this.props.stop;
@@ -118,7 +114,6 @@ class Record extends React.Component {
 
   render () {
     return (<tr className="table_record">
-      {/*{console.log(this.state)}*/}
       <td className="table_time">{getTimeDiff(this.props.start, this.state.stop)}</td>
       <td className="table_user">{this.props.user}</td>
       <td className="table_project">{this.props.project}</td>
@@ -134,12 +129,11 @@ class Record extends React.Component {
 class RecordsTable extends React.Component {
 
   constructor (props) {
-    console.log('wtf');
     super(props)
     this.state = {
       records: []
     }
-    // this.getRecords(0, this.props.initialLength)
+    this.getMoreRecords = this.getMoreRecords.bind(this) // this is for 'this' working in this context.
   }
 
   getRecords (offset, limit) {
@@ -150,7 +144,6 @@ class RecordsTable extends React.Component {
     Http.onload = () => {
       if (Http.status === 200) {
         const records = JSON.parse(Http.responseText)
-        console.log(this);
         this.setState((state) => {
           return {
             records: [...state.records, ...records]
@@ -163,7 +156,6 @@ class RecordsTable extends React.Component {
   }
 
   getMoreRecords () {
-    // console.log(this.state.records.length);
     this.getRecords(this.state.records.length, 10);
   }
 
@@ -183,13 +175,11 @@ class RecordsTable extends React.Component {
         </tr>
         {
           this.state.records.map((record) => {
-            console.log('a hule?');
             return (
-              <Record key={record.id} user={record.student} start={new Date(record.start)} stop={new Date(record.stop)}
+              <Record key={record.id} user={record.student} start={new Date(record.start)} stop={record.stop?new Date(record.stop):undefined}
                       project={record.project} task={record.task}/>)
           })
         }
-        {console.log(this.state.records)}
         </tbody>
       </table>
       <div id="load-more">
