@@ -3,6 +3,7 @@
 package-lock.json
 
 src.transpiled
+public/busdebug
 
 # Logs
 logs

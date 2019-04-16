@@ -9,6 +9,7 @@ class Timer extends React.Component {
   constructor () {
     super()
     this.handleSubmit = this.handleSubmit.bind(this) // this is for 'this' working in this context.
+    this.updateTimer = this.updateTimer.bind(this) // this is for 'this' working in this context.
     this.handleInputChange = this.handleInputChange.bind(this) // this is for 'this' working in this context.
     // is this clear?
     this.state = {
@@ -17,6 +18,7 @@ class Timer extends React.Component {
       username: '',
       project_name: '',
       task_name: '',
+      timer: '00:00:00'
     }
   }
 
@@ -27,12 +29,11 @@ class Timer extends React.Component {
   sendRecord (event) {
     const message = new FormData()
     const data = event.target
-    message.append('', username)
-    message.append('', project_name)
-    message.append('', task_name)
+    message.append('username', this.state.username)
+    message.append('project_name', this.state.project_name)
+    message.append('task_name', this.state.task_name)
     message.append('action', this.state.play ? 'start' : 'stop')
-    if (this.state.play) message.append('stop_time', (new Date()).getTime() / 1000)
-    console.log(this.state)
+    if (!this.state.play) message.append('stop_time', (new Date()).getTime() / 1000)
     message.append('start_time', this.state.start.getTime() / 1000)
 
     const Http = new XMLHttpRequest()
@@ -48,16 +49,18 @@ class Timer extends React.Component {
         this.setState({
           play: true,
           start: new Date(),
-          interval: setInterval(this.render, 1000)
-        }, ()=>{this.sendRecord(event)})
+          interval: setInterval(this.updateTimer, 1000)
+        }, () => {this.sendRecord(event)})
         // this.sendRecord(event)
       } else {
-        this.sendRecord(event)
+        this.setState({
+          play: false
+        }, () => this.sendRecord(event))
         clearInterval(this.state.interval)
         this.setState({
-          play: false,
           start: new Date(),
-          interval: null
+          interval: null,
+          timer: '00:00:00'
         })
       }
     }
@@ -67,10 +70,15 @@ class Timer extends React.Component {
     const target = event.target
     const name = target.name
     const value = target.value
-    console.log(name)
 
     this.setState({
       [name]: value
+    })
+  }
+
+  updateTimer () {
+    this.setState({
+      timer: getTimeDiff(this.state.start, new Date())
     })
   }
 
@@ -84,7 +92,7 @@ class Timer extends React.Component {
       <input id="button" className="button" type="image" src={this.state.play ? 'img/stop.jpg' : 'img/play.png'}
              alt="Submit"/>
 
-      <div id="time"> {this.state.interval ? getTimeDiff(this.state.start, new Date()) : '00:00:00'} </div>
+      <div id="time"> {this.state.timer} </div>
 
       <label htmlFor="project_name">Project title:</label>
       <input type="text" id="project_name" name="project_name" value={this.state.project_name} minLength="3" required
