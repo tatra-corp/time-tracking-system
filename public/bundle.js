@@ -26,7 +26,7 @@ class Timer extends React.Component {
     return true
   }
 
-  sendRecord (event) {
+  sendRecord (event, callback) {
     const message = new FormData()
     const data = event.target
     message.append('username', this.state.username)
@@ -40,6 +40,7 @@ class Timer extends React.Component {
     const url = '/records'
     Http.open('POST', url)
     Http.send(message)
+    callback()
   };
 
   handleSubmit (event) {
@@ -50,18 +51,16 @@ class Timer extends React.Component {
           play: true,
           start: new Date(),
           interval: setInterval(this.updateTimer, 1000)
-        }, () => {this.sendRecord(event)})
-        // this.sendRecord(event)
+        }, () => this.sendRecord(event))
       } else {
         this.setState({
           play: false
-        }, () => this.sendRecord(event))
+        }, () => this.sendRecord(event,
+          () => {this.setState({
+            interval: null,
+            timer: '00:00:00'
+          })}))
         clearInterval(this.state.interval)
-        this.setState({
-          start: new Date(),
-          interval: null,
-          timer: '00:00:00'
-        })
       }
     }
   }
