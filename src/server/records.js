@@ -45,10 +45,7 @@ async function startTimer (body) {
 }
 
 async function stopTimer (body) {
-  console.log('STOP TIME')
-  console.log(body)
   const recordID = await findRecordID(body)
-  console.log(recordID)
   db.query('UPDATE record SET stop = to_timestamp($1) WHERE id = $2', [body.stop_time, recordID])
 }
 
