@@ -5,9 +5,9 @@
   "main": "src/server/app.js",
   "private": true,
   "scripts": {
-    "build": "babel src --out-dir src.transpiled --source-maps",
+    "build": "babel src/server --out-dir src.transpiled/server --source-maps && webpack --config dev.config.js",
     "start": "node src.transpiled/server/app.js",
-    "test": "eslint src/server public/bundle.js && mocha --exit"
+    "test": "eslint src/server src/frontend && mocha --exit"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -16,18 +16,23 @@
     "form-data": "latest",
     "multer": "^1.4.1",
     "pg": "^7.9.0",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "webpack": "^4.30.0",
+    "react": "^16.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "@types/express": "^4.16.1",
+    "babel-loader": "^8.0.5",
     "eslint": "^5.15.3",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
     "mocha": "^6.0.2",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "webpack-cli": "^3.3.1",
+    "eslint-plugin-react": "^7.11.0"
   },
   "author": "Harrm & iambackend"
 }
