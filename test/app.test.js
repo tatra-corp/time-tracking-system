@@ -9,8 +9,8 @@ describe('App', () => {
     it('should return 200 in response to start timer request, even if data is corrupted', () => {
       request(app).post('/records')
         .field('username', 'hacker')
-        .field('project_name', 'site')
-        .field('task_name', 'working')
+        .field('project', 'site')
+        .field('task', 'working')
         .field('action', 'start')
         .field('start_time', '-10')
         .field('stop_time', '10')

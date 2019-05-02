@@ -5,6 +5,9 @@ package-lock.json
 src.transpiled
 public/busdebug
 
+#macos thing
+.DS_Store
+
 # Logs
 logs
 *.log

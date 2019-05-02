@@ -19,10 +19,10 @@ async function findTaskID (taskName, projectID) {
 }
 
 async function findRecordID (body) {
-  const projectIdPromise = findProjectID(body.project_name)
+  const projectIdPromise = findProjectID(body.project)
   const studentIdPromise = findStudentID(body.username)
   const projectId = await projectIdPromise
-  const taskIdPromise = findTaskID(body.task_name, projectId)
+  const taskIdPromise = findTaskID(body.task, projectId)
   const studentId = await studentIdPromise
   const taskId = await taskIdPromise
 
@@ -33,10 +33,10 @@ async function findRecordID (body) {
 }
 
 async function startTimer (body) {
-  const projectIdPromise = findProjectID(body.project_name)
+  const projectIdPromise = findProjectID(body.project)
   const studentIdPromise = findStudentID(body.username)
   const projectId = await projectIdPromise
-  const taskIdPromise = findTaskID(body.task_name, projectId)
+  const taskIdPromise = findTaskID(body.task, projectId)
   const studentId = await studentIdPromise
   const taskId = await taskIdPromise
 
@@ -56,8 +56,31 @@ async function getRecords (offset, limit) {
   return result.rows
 }
 
+async function getUsers () {
+  const result = await db.query('SELECT student.name as username FROM student ORDER BY username')
+  return result.rows.map((row) => { return row.username})
+}
+
+async function getProjects (username) {
+  const result = await db.query('SELECT project.name as project FROM student' +
+    ' JOIN participant ON student.name = $1 AND student.id = participant.student' +
+    ' JOIN project ON participant.project = project.id' +
+    ' ORDER BY project', [username])
+  return result.rows.map((row) => { return row.project})
+}
+
+async function getTasks (project) {
+  const result = await db.query('SELECT task.name as task FROM project ' +
+    'JOIN task ON project.name = $1 AND project.id = task.project ' +
+    'ORDER BY task', [project])
+  return result.rows.map((row) => { return row.task})
+}
+
 module.exports = {
   start: startTimer,
   stop: stopTimer,
   getRecords,
+  getUsers,
+  getProjects,
+  getTasks
 }

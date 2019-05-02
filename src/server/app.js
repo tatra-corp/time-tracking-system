@@ -33,6 +33,33 @@ routes.get('/records', (req, res) => {
   });
 });
 
+routes.get('/users_list', (req, res) => {
+  timer.getUsers().then((data) => {
+    res.status(200).send(JSON.stringify(data))
+  }).catch((reason) => {
+    console.error(reason)
+    res.sendStatus(400)
+  })
+});
+
+routes.get('/projects_list', (req, res) => {
+  timer.getProjects(req.query.user).then((data) => {
+    res.status(200).send(JSON.stringify(data))
+  }).catch((reason) => {
+    console.error(reason)
+    res.sendStatus(400)
+  })
+});
+
+routes.get('/tasks_list', (req, res) => {
+  timer.getTasks(req.query.project).then((data) => {
+    res.status(200).send(JSON.stringify(data))
+  }).catch((reason) => {
+    console.error(reason)
+    res.sendStatus(400)
+  })
+});
+
 routes.use('/', express.static(path.join('public')));
 
 app.use('/', routes);
