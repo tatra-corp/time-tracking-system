@@ -42,7 +42,10 @@ class RecordsTable extends React.Component {
     }
 
     getMoreRecords() {
-        getRecords(this.state.records.length, 10).then((recs) => {
+        let offset = (this.state.records.length?new Date(this.state.records[this.state.records.length-1].start):new Date())
+        const str_offset = "" + offset.getFullYear() + "-" + (offset.getMonth() + 1)+ "-" + offset.getDate() + " "
+          + offset.getHours() + ":" + offset.getMinutes() + ":" + offset.getSeconds() + "." + ("00" + offset.getMilliseconds()).slice(-3);
+        getRecords(str_offset, 10).then((recs) => {
             this.setState(state => ({
                 records: [...state.records, ...recs],
             }));
@@ -53,8 +56,11 @@ class RecordsTable extends React.Component {
         this.getMoreRecords()
     }
 
-    updateRecords() {
-        getRecords(0, this.state.records.length).then((recs) => {
+    reloadRecords() {
+        let offset = new Date()
+        const str_offset = "" + offset.getFullYear() + "-" + (offset.getMonth() + 1)+ "-" + offset.getDate() + " "
+          + offset.getHours() + ":" + offset.getMinutes() + ":" + offset.getSeconds() + "." + ("00" + offset.getMilliseconds()).slice(-3);
+        getRecords(str_offset, this.state.records.length).then((recs) => {
             this.setState(state => ({
                 records: [...recs],
             }));
@@ -77,7 +83,7 @@ class RecordsTable extends React.Component {
                         return (
                             <Record key={record.id} user={record.student} start={new Date(record.start)}
                                     stop={new Date(record.stop)}
-                                    project={record.project} task={record.task} onDelete={() => this.updateRecords()}/>)
+                                    project={record.project} task={record.task} onDelete={() => this.reloadRecords()}/>)
                     })
                 }
                 </tbody>

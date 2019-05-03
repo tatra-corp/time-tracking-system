@@ -66,7 +66,7 @@ async function getActiveRecordFor(username) {
 async function getRecords(offset, limit) {
   const result = await db.query('SELECT record.id, student.name as student, project.name as project, task.name as task, record.start, record.stop FROM record '
     + 'JOIN student ON record.student = student.id JOIN project ON record.project = project.id JOIN task ON record.task = task.id '
-    + 'ORDER BY start DESC OFFSET $1 LIMIT $2', [offset, limit]);
+    + 'WHERE start < $1 ORDER BY start DESC LIMIT $2', [offset, limit]);
   return result.rows;
 }
 
@@ -91,8 +91,6 @@ async function getTasks(project) {
 }
 
 async function deleteRecord(username, start) {
-  console.log(username);
-  console.log(start);
   const sid = await findStudentID(username);
   const result = await db.query('DELETE FROM record WHERE student = $1 AND start = $2', [sid, start]);
   return result.rows;

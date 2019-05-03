@@ -202,7 +202,7 @@ export default class Timer extends React.Component {
         <label htmlFor="username">Your name:</label>
         <select id="username" name="username" value={this.state.username} disabled={this.state.play} required
                 onChange={(e) => this.handleUserChange(e.target.value)}>
-          <option hidden disabled selected value="default"> -- select an option --</option>
+          <option hidden disabled value="default"> -- select an option --</option>
           {this.state.users.map((username) => {
             return (<option value={username}>{username}</option>)
           })}
@@ -216,7 +216,7 @@ export default class Timer extends React.Component {
         <label htmlFor="project">Project title:</label>
         <select id="project" name="project" value={this.state.project} disabled={this.state.play} required
                 onChange={(event) => this.handleProjectChange(event.target.value)}>
-          <option hidden disabled selected value="default"> -- select an option --</option>
+          <option hidden disabled value="default"> -- select an option --</option>
           {this.state.projects.map((project) => {
             return (<option value={project}>{project}</option>)
           })}
@@ -225,7 +225,7 @@ export default class Timer extends React.Component {
         <label htmlFor="task">Task name:</label>
         <select id="task" name="task" value={this.state.task} disabled={this.state.play} required
                 onChange={event => this.handleInputChange(event.target)}>
-          <option hidden disabled selected value="default"> -- select an option --</option>
+          <option hidden disabled value="default"> -- select an option --</option>
           {this.state.tasks.map((task) => {
             return (<option value={task}>{task}</option>)
           })}
