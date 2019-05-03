@@ -1,4 +1,5 @@
 import Timer from './timer.js'
+import {getRecords, deleteRecord} from './storage'
 
 function getTimeDiff(date1, date2) {
     const diff = new Date(date2.getTime() - date1.getTime());
@@ -6,7 +7,6 @@ function getTimeDiff(date1, date2) {
         (`0${diff.getMinutes()}`).slice(-2)}:${
         (`0${diff.getSeconds()}`).slice(-2)}`
 }
-
 
 class Record extends React.Component {
 
@@ -27,12 +27,20 @@ class Record extends React.Component {
             this.state.stop = this.props.stop
     }
 
+    deleteItself(event) {
+        const date = this.props.start;
+        const startStr = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + ' '
+            + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+        deleteRecord(this.props.user, startStr);
+    }
+
     render() {
         return (<tr className="table_record">
             <td className="table_time">{getTimeDiff(this.props.start, this.state.stop)}</td>
             <td className="table_user">{this.props.user}</td>
             <td className="table_project">{this.props.project}</td>
             <td className="table_task">{this.props.task}</td>
+            <td>Remove: <button onClick={(e) => this.deleteItself(e)}>X</button></td>
         </tr>)
     }
 }
@@ -47,27 +55,12 @@ class RecordsTable extends React.Component {
         this.getMoreRecords = this.getMoreRecords.bind(this) // this is for 'this' working in this context.
     }
 
-    getRecords(offset, limit) {
-        const Http = new XMLHttpRequest();
-        const url = `/records?offset=${offset}&limit=${limit}`;
-        Http.open('GET', url);
-        Http.send();
-        Http.onload = () => {
-            if (Http.status === 200) {
-                const records = JSON.parse(Http.responseText);
-                this.setState((state) => {
-                    return {
-                        records: [...state.records, ...records]
-                    }
-                })
-            } else {
-                console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`)
-            }
-        }
-    }
-
     getMoreRecords() {
-        this.getRecords(this.state.records.length, 10)
+        getRecords(this.state.records.length, 10).then((recs) => {
+            this.setState(state => ({
+                records: [...state.records, ...recs],
+            }));
+        });
     }
 
     componentDidMount() {

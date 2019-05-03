@@ -2,8 +2,6 @@ const { describe } = require('mocha');
 const request = require('supertest');
 const app = require('../src/server/app');
 
-// These test are not unit, so don't expect anything smart here. Probably it's called integration tests;
-
 describe('App', () => {
   describe('#post/records', (done) => {
     it('should return 200 in response to start timer request, even if data is corrupted', () => {
