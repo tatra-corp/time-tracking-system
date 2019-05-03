@@ -29,9 +29,10 @@ class Record extends React.Component {
 
     deleteItself(event) {
         const date = this.props.start;
-        const startStr = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + ' '
-            + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-        deleteRecord(this.props.user, startStr);
+        const startStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' '
+            + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + (`00${date.getMilliseconds()}`).slice(-3);
+        console.log(startStr);
+        deleteRecord(this.props.user, startStr).then(this.props.onDelete);
     }
 
     render() {
@@ -40,7 +41,7 @@ class Record extends React.Component {
             <td className="table_user">{this.props.user}</td>
             <td className="table_project">{this.props.project}</td>
             <td className="table_task">{this.props.task}</td>
-            <td>Remove: <button onClick={(e) => this.deleteItself(e)}>X</button></td>
+            <td><button onClick={(e) => this.deleteItself(e)}>Remove</button></td>
         </tr>)
     }
 }
@@ -67,6 +68,14 @@ class RecordsTable extends React.Component {
         this.getMoreRecords()
     }
 
+    updateRecords() {
+        getRecords(0, this.state.records.length).then((recs) => {
+            this.setState(state => ({
+                records: [...recs],
+            }));
+        });
+    }
+
     render() {
         return (<div id="records_table">
             <table style={{'width': '100%'}}>
@@ -76,13 +85,14 @@ class RecordsTable extends React.Component {
                     <th>Username</th>
                     <th>Project</th>
                     <th>Task</th>
+                    <th>Remove</th>
                 </tr>
                 {
                     this.state.records.map((record) => {
                         return (
                             <Record key={record.id} user={record.student} start={new Date(record.start)}
                                     stop={record.stop ? new Date(record.stop) : undefined}
-                                    project={record.project} task={record.task}/>)
+                                    project={record.project} task={record.task} onDelete={() => this.updateRecords()}/>)
                     })
                 }
                 </tbody>
