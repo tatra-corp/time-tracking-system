@@ -9,22 +9,8 @@ function getTimeDiff(date1, date2) {
 }
 
 class Record extends React.Component {
-
-    updateTime() {
-        this.setState({
-            stop: new Date()
-        })
-    }
-
     constructor(props) {
         super(props);
-        this.state = {};
-        if (this.props.stop === undefined) {
-            this.state.stop = new Date();
-            this.updateTime = this.updateTime.bind(this);
-            setInterval(this.updateTime, 1000)
-        } else
-            this.state.stop = this.props.stop
     }
 
     deleteItself(event) {
@@ -36,7 +22,7 @@ class Record extends React.Component {
 
     render() {
         return (<tr className="table_record">
-            <td className="table_time">{getTimeDiff(this.props.start, this.state.stop)}</td>
+            <td className="table_time">{getTimeDiff(this.props.start, this.props.stop)}</td>
             <td className="table_user">{this.props.user}</td>
             <td className="table_project">{this.props.project}</td>
             <td className="table_task">{this.props.task}</td>
@@ -87,10 +73,10 @@ class RecordsTable extends React.Component {
                     <th>Remove</th>
                 </tr>
                 {
-                    this.state.records.map((record) => {
+                    this.state.records.filter(record => record.stop !== null).map((record) => {
                         return (
                             <Record key={record.id} user={record.student} start={new Date(record.start)}
-                                    stop={record.stop ? new Date(record.stop) : undefined}
+                                    stop={new Date(record.stop)}
                                     project={record.project} task={record.task} onDelete={() => this.updateRecords()}/>)
                     })
                 }

@@ -72,7 +72,7 @@ export default class Timer extends React.Component {
     request.send()
   }
 
-  componentDidMount () {
+  componentWillMount () {
     this.downloadUsers();
 
     let name = getCookie("username");
