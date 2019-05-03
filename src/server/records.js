@@ -27,7 +27,7 @@ async function findRecordID(body) {
   const taskId = await taskIdPromise;
 
   const result = await db.query('SELECT id FROM record WHERE student = $1 AND project = $2 AND task = $3'
-    + 'AND start = to_timestamp($4)', [studentId, projectId, taskId, body.start_time]);
+    + 'AND start = $4', [studentId, projectId, taskId, body.start_time]);
   if (typeof result === 'undefined') return undefined;
   return result.rows[0].id;
 }
@@ -40,13 +40,16 @@ async function startTimer(body) {
   const studentId = await studentIdPromise;
   const taskId = await taskIdPromise;
 
-  db.query('INSERT INTO record(student, project, task, start) values($1, $2, $3, to_timestamp($4))', [studentId,
-    projectId, taskId, body.start_time]);
+  const res = await db.query('SELECT * FROM record WHERE start = $1 AND student = $2', [body.start_time, studentId]);
+  if (res.rows.length === 0) {
+    db.query('INSERT INTO record(student, project, task, start) values($1, $2, $3, $4)', [studentId,
+      projectId, taskId, body.start_time]);
+  }
 }
 
 async function stopTimer(body) {
   const recordID = await findRecordID(body);
-  db.query('UPDATE record SET stop = to_timestamp($1) WHERE id = $2', [body.stop_time, recordID]);
+  db.query('UPDATE record SET stop = $1 WHERE id = $2', [body.stop_time, recordID]);
 }
 
 async function getActiveRecordFor(username) {
@@ -103,5 +106,5 @@ module.exports = {
   getProjects,
   getTasks,
   getActiveRecordFor,
-  deleteRecord
+  deleteRecord,
 };

@@ -26,7 +26,11 @@ export async function getActiveRecordFor(username) {
   return new Promise((resolve, reject) => {
     Http.onload = () => {
       if (Http.status === 200) {
-        resolve(JSON.parse(Http.responseText));
+        try {
+          resolve(JSON.parse(Http.responseText));
+        } catch (SyntaxError) {
+          reject();
+        }
       } else {
         console.error(`Muhaha, I lied, I will log into console till I die!\nResponse status: ${Http.status}`);
         reject();

@@ -29,10 +29,9 @@ class Record extends React.Component {
 
     deleteItself(event) {
         const date = this.props.start;
-        const startStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' '
-            + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + (`00${date.getMilliseconds()}`).slice(-3);
-        console.log(startStr);
-        deleteRecord(this.props.user, startStr).then(this.props.onDelete);
+        const start_date = "" + date.getFullYear() + "-" + (date.getMonth() + 1)+ "-" + date.getDate() + " "
+        + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + ("00" + date.getMilliseconds()).slice(-3);
+        deleteRecord(this.props.user, start_date).then(this.props.onDelete);
     }
 
     render() {

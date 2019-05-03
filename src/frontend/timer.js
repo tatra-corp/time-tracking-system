@@ -92,8 +92,11 @@ export default class Timer extends React.Component {
     message.append('project', this.state.project);
     message.append('task', this.state.task);
     message.append('action', this.state.play ? 'start' : 'stop');
-    if (!this.state.play) message.append('stop_time', (new Date()).getTime() / 1000);
-    message.append('start_time', this.state.start.getTime() / 1000);
+    const makeDate = (date) => "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " "
+      + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + ("00" + date.getMilliseconds()).slice(-3);
+
+    if (!this.state.play) message.append('stop_time', makeDate(new Date()));
+    message.append('start_time', makeDate(this.state.start));
 
     const Http = new XMLHttpRequest();
     const url = '/records';
@@ -153,14 +156,16 @@ export default class Timer extends React.Component {
         newState.timer = getTimeDiff(newState.start, new Date());
         newState.project = record.project;
         newState.task = record.task;
+        this.setState(newState, () => {
+          this.handleProjectChange(record.project);
+          this.handleInputChange({name: 'task', value: record.task});
+          this.sendRecord();
+        });
       }
+    }).catch(() => {});
 
-      this.setState(newState, () => {
-        this.handleProjectChange(record.project);
-        this.handleInputChange({name: 'task', value: record.task});
-        this.sendRecord();
-        this.downloadProjects();
-      })
+    this.setState(newState, () => {
+      this.downloadProjects();
     });
   }
 
